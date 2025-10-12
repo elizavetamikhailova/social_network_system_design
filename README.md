@@ -39,5 +39,13 @@
 - Traffic = 1157 * 1 kb = 1 mb
 - Connections = dau * 0.1 = 1 000 000
 ### Подписки
+> Subscription
+>
+>> id 8 byte
+>> user_id 8 byte
+>> subscription_to_id 8 byte
+- RPS = 10 000 000 * 3 / 86 400 = 347
+- Traffic = 347 * 24 = 8 kb
+- Connections = dau * 0.1 = 1 000 000
 ### Поиск
 ### Просмотр информации в посте
