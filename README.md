@@ -25,7 +25,7 @@
 >> - latitude 8 byte
 >> - longtitude 8 byte
 - RPS = dau * avg_requests_per_day_by_user / 86 400 = 10 000 000 * 3 / 86 400 = 347
-- Traffic = rps * avg_request_size = 347 * (2 kb + 5 * 3000 kb) = 15 002 = 15 mb
+- Traffic = rps * avg_request_size = 347 * (2 kb + 5 * 3000 kb(фото из поста)) = 15 002 = 15 mb
 - Connections = dau * 0.1 = 1 000 000
 ### Реакции
 ### Подписки
