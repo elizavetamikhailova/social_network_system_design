@@ -48,4 +48,12 @@
 - Traffic = 347 * 24 = 8 kb
 - Connections = dau * 0.1 = 1 000 000
 ### Поиск
+> Search
+>
+>> location_user_input 50 byte
+>> latitude 8 byte
+>> longitude 8 byte
+- RPS = 10 000 000 * 7 / 86 400 = 810
+- Traffic = 810 * 66 = 52 kb
+### Просмотр поста
 ### Просмотр информации в посте
