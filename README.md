@@ -29,7 +29,7 @@
 - RPS(фото) = dau * avg_requests_per_day_by_user / 86 400 = 10 000 000 * 1.7 / 86 400 = 196
 - Traffic(загрузка фото) = 196 * 3000 kb(примерный вес фото из поста после сжатия) = 574 mb
 - Connections = dau * 0.1 = 1 000 000
-### Реакции
+### Реакции (оставить реакцию)
 > Reaction
 >
 >> - id 8 byte
@@ -40,7 +40,18 @@
 - RPS = 10 000 000 * 10 / 86 400 = 1157
 - Traffic = 1157 * 1 kb = 1 mb
 - Connections = dau * 0.1 = 1 000 000
-## Подписки
+### Комментарий (оставить комментарий)
+> Comment
+>
+>> - id 8 byte
+>> - post_id 8 byte
+>> - user_id 8 byte
+>> - comment_id 8 byte
+>> - comment 1000 byte
+- RPS = 10 000 000 * 10 / 86 400 = 1157
+- Traffic = 1157 * 1 kb = 1 mb
+- Connections = dau * 0.1 = 1 000 000
+## Подписки (подписаться на кого-то)
 > Subscription
 >
 >> id 8 byte
