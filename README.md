@@ -24,9 +24,9 @@
 >> - description 1000 byte
 >> - latitude 8 byte
 >> - longtitude 8 byte
-- RPS(пост) = dau * avg_requests_per_day_by_user / 86 400 = 10 000 000 * 0.3 / 86 400 = 35
-- Traffic(пост) = rps * avg_request_size = 35 * 2 kb = 70 kb
-- RPS(фото) = dau * avg_requests_per_day_by_user / 86 400 = 10 000 000 * 1.7 / 86 400 = 196
+- RPS(создание поста) = dau * avg_requests_per_day_by_user / 86 400 = 10 000 000 * 0.3 / 86 400 = 35
+- Traffic(создание поста) = rps * avg_request_size = 35 * 2 kb = 70 kb
+- RPS(загрузка фото) = dau * avg_requests_per_day_by_user / 86 400 = 10 000 000 * 1.7 / 86 400 = 196
 - Traffic(загрузка фото) = 196 * 3000 kb(примерный вес фото из поста после сжатия) = 574 mb
 - Connections = dau * 0.1 = 1 000 000
 ### Реакции (оставить реакцию)
