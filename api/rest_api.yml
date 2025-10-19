@@ -127,15 +127,27 @@ paths:
           schema:
             type: integer
             format: int64
+        - in: query
+          name: limit
+          description: Max items to return (1..100). Default 20.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Reaction'
+                $ref: '#/components/schemas/Reactions'
         default:
           description: Unexpected error
           content:
@@ -512,6 +524,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Comment'
+        nextCursor: 
+            type: string
+            example: "eyJ0czoiMjAyNS0xMC0xOVQxNTowMToyMloiLCJpZCI6InBzdF8wMUo5QVgzR1EzRTIifQ=="
+        hasMore: 
+          type: boolean
+          example: true
+    Reactions:
+      required:
+        - reactions
+        - cursor
+        - hasMore
+      type: object
+      properties:
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reaction'
         nextCursor: 
             type: string
             example: "eyJ0czoiMjAyNS0xMC0xOVQxNTowMToyMloiLCJpZCI6InBzdF8wMUo5QVgzR1EzRTIifQ=="
