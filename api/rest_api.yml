@@ -100,6 +100,59 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /comments/sendComment:
+    post:
+      tags:
+        - comments
+      summary: Оставить комментарий
+      description: Оставить комментарий к какому-то посту
+      operationId: sendComment
+      requestBody:
+        description: Тело комментария
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendCommentBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /comments/getComments/{post_id}:
+    get:
+      tags:
+        - comments
+      summary: Получить комментарии к посту
+      description: Получить комментарии к какому-то посту
+      operationId: getComments
+      parameters:
+        - name: post_id
+          in: path
+          description: id поста, к которому нужно получить комментарии
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
     CreatePostBody:
@@ -183,6 +236,7 @@ components:
           example: "Великолепно!"
     Reaction:
       required:
+        - id
         - user
         - rate
         - comment
@@ -190,6 +244,10 @@ components:
       properties:
         user: 
           $ref: '#/components/schemas/User'
+        id:
+          type: integer
+          format: int64
+          example: 10
         rate:
           type: integer
           format: int64
@@ -214,6 +272,35 @@ components:
         avatar_url:
           type: string
           example: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrxOTdBgCXwbUydQIy_30TzwBYJ6wrUhF78A&s"
+    SendCommentBody:
+      required:
+        - post_id
+        - text
+      type: object
+      properties:
+        post_id:
+          type: integer
+          format: int64
+          example: 10
+        text:
+          type: string
+          example: "Хороший пост!"
+    Comment:
+      required:
+        - user
+        - id
+        - text
+      type: object
+      properties:
+        user: 
+          $ref: '#/components/schemas/User'
+        id:
+          type: integer
+          format: int64
+          example: 10
+        text:
+          type: string
+          example: "Хороший пост!"
     ApiResponse:
       type: object
       properties:
