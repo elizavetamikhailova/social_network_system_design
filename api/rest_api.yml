@@ -9,6 +9,8 @@ servers:
 tags:
   - name: post
     description: Создание и просмотр постов
+  - name: photos
+    description: Загрузка и получение фото
   - name: reactions
     description: Создание реакций (комментарий + оценка)
   - name: comments
@@ -47,6 +49,58 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /photos/uploadPhoto:
+    post:
+      tags:
+        - photos
+      summary: Загрузить фото
+      description: Загружает фото и возвращает ссылку на него
+      operationId: uploadPhoto
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Файл с изображением
+                post_id:
+                  type: integer
+                  format: int64
+                  example: 10
+            encoding:
+              file:
+                contentType: image/jpeg, image/png, image/webp
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Photo'
+        '400':
+          description: Bad Request (validation failed)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                tooLarge:
+                  value:
+                    code: "FILE_TOO_LARGE"
+                    message: "Max size is 10 MiB."
+                unsupportedType:
+                  value:
+                    code: "UNSUPPORTED_MIME"
+                    message: "Only image/jpeg, image/png, image/webp are allowed."
+        '415':
+          description: Unsupported Media Type
+        '500':
+          description: Server Error
   /reactions/sendReaction:
     post:
       tags:
@@ -323,6 +377,20 @@ components:
       required:
         - code
         - message
+    Photo:
+      type: object
+      required:
+        - post_id
+        - url
+      properties:
+        post_id:
+          type: integer
+          format: int64
+          example: 10
+        url:
+          type: string
+          example: "url"
+      
   requestBodies:
     CreatePostBody:
       description: Сущность для сохранения поста
