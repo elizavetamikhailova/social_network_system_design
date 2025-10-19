@@ -82,25 +82,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Photo'
-        '400':
-          description: Bad Request (validation failed)
+                default:
+        default:
+          description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                tooLarge:
-                  value:
-                    code: "FILE_TOO_LARGE"
-                    message: "Max size is 10 MiB."
-                unsupportedType:
-                  value:
-                    code: "UNSUPPORTED_MIME"
-                    message: "Only image/jpeg, image/png, image/webp are allowed."
-        '415':
-          description: Unsupported Media Type
-        '500':
-          description: Server Error
+                $ref: "#/components/schemas/Error"
   /reactions/sendReaction:
     post:
       tags:
@@ -201,6 +189,50 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /feed/getFeed:
+    get:
+      summary: Получение ленты для пользователя
+      description: Возвращает список постов, используя курсорную пагинацию
+      operationId: getFeed
+      parameters:
+        - in: query
+          name: limit
+          description: Max items to return (1..100). Default 20.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: before
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feed'
         default:
           description: Unexpected error
           content:
@@ -390,6 +422,19 @@ components:
         url:
           type: string
           example: "url"
+    Feed: 
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        nextCursor: 
+          type: string
+          example: "eyJ0czoiMjAyNS0xMC0xOVQxNTowMToyMloiLCJpZCI6InBzdF8wMUo5QVgzR1EzRTIifQ=="
+        hasMore: 
+          type: boolean
+          example: true
       
   requestBodies:
     CreatePostBody:
