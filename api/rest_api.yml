@@ -241,6 +241,106 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /search/findByLocation:
+    get:
+      tags:
+        - search
+      summary: Получение ленты по поиску по заданной локации 
+      description: Возвращает список постов по заданной локации, используя курсорную пагинацию
+      operationId: findByLocation
+      parameters:
+        - in: query
+          name: limit
+          description: Max items to return (1..100). Default 20.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: latitude
+          required: true
+          schema:
+            type: number
+            format: double
+            example: 43.77125872427964
+        - in: query
+          name: longtitude
+          required: true
+          schema:
+            type: number
+            format: double
+            example: 11.26393917073614
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feed'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /search/findByLocationName:
+    get:
+      tags:
+        - search
+      summary: Получение ленты по поиску по названию локации
+      description: Возвращает список постов по названию локации, используя курсорную пагинацию
+      operationId: findByLocationName
+      parameters:
+        - in: query
+          name: limit
+          description: Max items to return (1..100). Default 20.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: locationName
+          required: true
+          schema:
+            type: string
+            example: "Флоренция"
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feed'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
     CreatePostBody:
@@ -389,18 +489,6 @@ components:
         text:
           type: string
           example: "Хороший пост!"
-    ApiResponse:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        type:
-          type: string
-        message:
-          type: string
-      xml:
-        name: '##default'
     Error:
       type: object
       properties:
@@ -457,16 +545,3 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/SendCommentBody'
-  securitySchemes:
-    petstore_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
-          scopes:
-            "write:pets": modify pets in your account
-            "read:pets": read your pets
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
