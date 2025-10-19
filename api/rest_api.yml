@@ -197,6 +197,8 @@ paths:
                 $ref: "#/components/schemas/Error"
   /feed/getFeed:
     get:
+      tags:
+        - feed
       summary: Получение ленты для пользователя
       description: Возвращает список постов, используя курсорную пагинацию
       operationId: getFeed
