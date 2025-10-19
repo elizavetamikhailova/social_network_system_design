@@ -52,11 +52,54 @@ paths:
       tags:
         - reactions
       summary: Оставить реакцию (комментарий + оценка)
-      description: Загрузка поста пользователем
+      description: Оставить реакцию на какой-то пост
       operationId: sendReaction
       requestBody:
+        description: Тело реакции
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendReactionBody'
+        required: true
       responses:
-      
+        '200':
+          description: Successful operation
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /reactions/getReactions/{post_id}:
+    get:
+      tags:
+        - reactions
+      summary: Получить реакции (комментарий + оценка)
+      description: Получить реакции по какому-то посту
+      operationId: getReactions
+      parameters:
+        - name: post_id
+          in: path
+          description: id поста, к которому нужно получить реакции
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reaction'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
     CreatePostBody:
@@ -120,7 +163,7 @@ components:
           type: string
           format: date-time
           example: "2024-10-27T10:30:00Z"
-    SendReaction:
+    SendReactionBody:
       required:
         - post_id
         - rate
@@ -147,10 +190,6 @@ components:
       properties:
         user: 
           $ref: '#/components/schemas/User'
-        post_id:
-          type: integer
-          format: int64
-          example: 10
         rate:
           type: integer
           format: int64
@@ -175,7 +214,6 @@ components:
         avatar_url:
           type: string
           example: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrxOTdBgCXwbUydQIy_30TzwBYJ6wrUhF78A&s"
-          
     ApiResponse:
       type: object
       properties:
@@ -200,19 +238,17 @@ components:
         - message
   requestBodies:
     CreatePostBody:
-      description: Post object that needs to be added to the store
+      description: Сущность для сохранения поста
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/CreatePostBody'
-    UserArray:
-      description: List of user object
+    SendReactionBody:
+      description: Сущность для отправки реакции
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
+            $ref: '#/components/schemas/SendReactionBody'
   securitySchemes:
     petstore_auth:
       type: oauth2
