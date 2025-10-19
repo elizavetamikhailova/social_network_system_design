@@ -365,6 +365,64 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /subscriptions/subscribe:
+    post:
+      tags:
+        - subscription
+      summary: Подписка
+      description: Подписаться на какого-то пользователя
+      operationId: subscribe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscribeBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"      
+  /subscriptions/getSubscriptions:
+    get:
+      tags:
+        - subscription
+      summary: Получить список подписок
+      description: Получить список людей, на которых подписан пользователь
+      operationId: getSubscriptions
+      parameters:
+        - in: query
+          name: limit
+          description: Max items to return (1..100). Default 20.
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    
 components:
   schemas:
     CreatePostBody:
@@ -530,6 +588,23 @@ components:
         hasMore: 
           type: boolean
           example: true
+    Users:
+      required:
+        - subscriptions
+        - cursor
+        - hasMore
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        nextCursor: 
+            type: string
+            example: "eyJ0czoiMjAyNS0xMC0xOVQxNTowMToyMloiLCJpZCI6InBzdF8wMUo5QVgzR1EzRTIifQ=="
+        hasMore: 
+          type: boolean
+          example: true    
     Reactions:
       required:
         - reactions
@@ -537,7 +612,7 @@ components:
         - hasMore
       type: object
       properties:
-        comments:
+        reactions:
           type: array
           items:
             $ref: '#/components/schemas/Reaction'
@@ -583,8 +658,22 @@ components:
         hasMore: 
           type: boolean
           example: true
-      
+    SubscribeBody:
+      required:
+        - subscription_to_id
+      type: object
+      properties:
+        subscription_to_id:
+          type: integer
+          format: int64
+          example: 10  
   requestBodies:
+    SubscribeBody:
+      description: Сущность для выполнения подписки
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubscribeBody'
     CreatePostBody:
       description: Сущность для сохранения поста
       content:
