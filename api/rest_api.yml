@@ -38,17 +38,24 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Post'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '413': { $ref: '#/components/responses/PayloadTooLarge' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
   /photos/uploadPhoto:
     post:
       tags:
@@ -78,17 +85,24 @@ paths:
       responses:
         '201':
           description: Created
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Photo'
-                default:
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '413': { $ref: '#/components/responses/PayloadTooLarge' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
   /reactions/sendReaction:
     post:
       tags:
@@ -105,13 +119,20 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
   /reactions/getReactions/{post_id}:
     get:
       tags:
@@ -143,17 +164,22 @@ paths:
             type: string
       responses:
         '200':
-          description: Successful operation
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Reactions'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
   /comments/sendComment:
     post:
       tags:
@@ -170,13 +196,20 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '413': { $ref: '#/components/responses/PayloadTooLarge' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
   /comments/getComments/{post_id}:
     get:
       tags:
@@ -208,17 +241,22 @@ paths:
             type: string
       responses:
         '200':
-          description: Successful operation
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Comments'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
   /feed/getFeed:
     get:
       tags:
@@ -259,12 +297,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Feed'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
   /search/findByLocation:
     get:
       tags:
@@ -313,12 +351,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Feed'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
   /search/findByLocationName:
     get:
       tags:
@@ -359,12 +398,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Feed'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
   /subscriptions/subscribe:
     post:
       tags:
@@ -380,13 +420,20 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"      
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' } 
   /subscriptions/getSubscriptions:
     get:
       tags:
@@ -411,17 +458,21 @@ paths:
             type: string
       responses:
         '200':
-          description: Successful operation
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Users'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
     
 components:
   schemas:
@@ -622,16 +673,6 @@ components:
         hasMore: 
           type: boolean
           example: true
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-        - code
-        - message
     Photo:
       type: object
       required:
@@ -667,6 +708,79 @@ components:
           type: integer
           format: int64
           example: 10  
+    ProblemDetails:
+         type: object
+         required: [type, title, status]
+         properties:
+           type: { type: string, format: uri }
+           title: { type: string }
+           status: { type: integer }
+           detail: { type: string }
+           code: { type: string }
+           correlationId: { type: string }
+  responses:
+       BadRequest:
+         description: Bad Request
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       Unauthorized:
+         description: Unauthorized
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       Forbidden:
+         description: Forbidden
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       NotFound:
+         description: Not Found
+         content:
+           application/problem+json:
+            schema: { $ref: '#/components/schemas/ProblemDetails' }
+       Conflict:
+         description: Conflict
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       UnsupportedMediaType:
+         description: Unsupported Media Type
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       PayloadTooLarge:
+         description: Payload Too Large
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       UnprocessableEntity:
+         description: Unprocessable Entity
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       TooManyRequests:
+         description: Too Many Requests
+         headers:
+           Retry-After:
+             schema: { type: string }
+             description: Seconds or HTTP-date
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       InternalServerError:
+         description: Internal Server Error
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       ServiceUnavailable:
+         description: Service Unavailable
+         headers:
+           Retry-After:
+             schema: { type: string }
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
   requestBodies:
     SubscribeBody:
       description: Сущность для выполнения подписки
