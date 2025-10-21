@@ -615,7 +615,7 @@ components:
           example: true
     Users:
       required:
-        - subscriptions
+        - users
         - cursor
         - hasMore
       type: object
