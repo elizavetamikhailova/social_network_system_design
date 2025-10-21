@@ -1,0 +1,782 @@
+openapi: 3.0.4
+info:
+  title: Swagger System Design - OpenAPI 3.0
+  description: |-
+    System Design социальной сети для путешественников для курса по System Design https://balun.courses
+  version: 1.0.0
+servers:
+  - url: https://adventure.wholeworld.com/api/v1
+tags:
+  - name: post
+    description: Создание и просмотр постов
+  - name: photos
+    description: Загрузка и получение фото
+  - name: reactions
+    description: Создание реакций (комментарий + оценка)
+  - name: comments
+    description: Создание комментариев
+  - name: subscription
+    description: Возможность подписаться
+  - name: search
+    description: Поиск постов по локации и названию мест
+  - name: feed
+    description: Просмотр ленты 
+paths:
+  /posts/createPost:
+    post:
+      tags:
+        - post
+      summary: Создание поста
+      description: Выложить пост
+      operationId: createPost
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      requestBody:
+        description: Тело поста
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePostBody'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '413': { $ref: '#/components/responses/PayloadTooLarge' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /photos/uploadPhoto:
+    post:
+      tags:
+        - photos
+      summary: Загрузить фото
+      description: Загружает фото и возвращает ссылку на него
+      operationId: uploadPhoto
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Файл с изображением
+                post_id:
+                  type: integer
+                  format: int64
+                  example: 10
+            encoding:
+              file:
+                contentType: image/jpeg, image/png, image/webp
+      responses:
+        '201':
+          description: Created
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Photo'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '413': { $ref: '#/components/responses/PayloadTooLarge' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /reactions/sendReaction:
+    post:
+      tags:
+        - reactions
+      summary: Оставить реакцию (комментарий + оценка)
+      description: Оставить реакцию на какой-то пост
+      operationId: sendReaction
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      requestBody:
+        description: Тело реакции
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendReactionBody'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /reactions/getReactions/{post_id}:
+    get:
+      tags:
+        - reactions
+      summary: Получить реакции (комментарий + оценка)
+      description: Получить реакции по какому-то посту
+      operationId: getReactions
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: post_id
+          in: path
+          description: id поста, к которому нужно получить реакции
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reactions'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /comments/sendComment:
+    post:
+      tags:
+        - comments
+      summary: Оставить комментарий
+      description: Оставить комментарий к какому-то посту
+      operationId: sendComment
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      requestBody:
+        description: Тело комментария
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendCommentBody'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '413': { $ref: '#/components/responses/PayloadTooLarge' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /comments/getComments/{post_id}:
+    get:
+      tags:
+        - comments
+      summary: Получить комментарии к посту
+      description: Получить комментарии к какому-то посту
+      operationId: getComments
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: post_id
+          in: path
+          description: id поста, к которому нужно получить комментарии
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comments'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /feed/getFeed:
+    get:
+      tags:
+        - feed
+      summary: Получение ленты для пользователя
+      description: Возвращает список постов, используя курсорную пагинацию
+      operationId: getFeed
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - in: query
+          name: before
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feed'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /search/findByLocation:
+    get:
+      tags:
+        - search
+      summary: Получение ленты по поиску по заданной локации 
+      description: Возвращает список постов по заданной локации, используя курсорную пагинацию
+      operationId: findByLocation
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - in: query
+          name: latitude
+          required: true
+          schema:
+            type: number
+            format: double
+            example: 43.77125872427964
+        - in: query
+          name: longtitude
+          required: true
+          schema:
+            type: number
+            format: double
+            example: 11.26393917073614
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feed'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /search/findByLocationName:
+    get:
+      tags:
+        - search
+      summary: Получение ленты по поиску по названию локации
+      description: Возвращает список постов по названию локации, используя курсорную пагинацию
+      operationId: findByLocationName
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - in: query
+          name: locationName
+          required: true
+          schema:
+            type: string
+            example: "Флоренция"
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feed'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /subscriptions/subscribe:
+    post:
+      tags:
+        - subscription
+      summary: Подписка
+      description: Подписаться на какого-то пользователя
+      operationId: subscribe
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscribeBody'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/UnprocessableEntity' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' } 
+  /subscriptions/getSubscriptions:
+    get:
+      tags:
+        - subscription
+      summary: Получить список подписок
+      description: Получить список людей, на которых подписан пользователь
+      operationId: getSubscriptions
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Request-Id:
+              description: Request correlation id
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalServerError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+    
+components:
+  parameters:
+    Limit:
+      in: query
+      name: limit
+      description: Max items to return (1..100). Default 20.
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    Cursor:
+      in: query
+      name: cursor
+      required: false
+      schema:
+        type: string
+    RequestId:
+      name: X-Request-Id
+      in: header
+      description: >
+        Уникальный идентификатор запроса для корреляции логов и трассировки.
+        Если не передан — сервер сгенерирует автоматически.
+      required: false
+      schema:
+        type: string
+        format: uuid
+        example: 8f1a3b2c-1234-4d5e-9876-abcdef123456
+  schemas:
+    CreatePostBody:
+      required:
+          - photo_urls
+          - description
+          - latitude
+          - longtitude
+      type: object
+      properties:
+        photo_urls:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+          example: "сущность в виде гномика"
+        latitude:
+          type: number
+          format: double
+          example: 43.77125872427964
+        longtitude:
+          type: number
+          format: double
+          example: 11.26393917073614
+    Post:
+      required:
+        - id
+        - user_id
+        - photo_urls
+        - description
+        - latitude
+        - longtitude
+        - time
+      type: object
+      properties:
+        id:
+            type: integer
+            format: int64
+            example: 10
+        user_id:
+            type: integer
+            format: int64
+            example: 10
+        photo_urls:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+          example: "сущность в виде гномика"
+        latitude:
+          type: number
+          format: double
+          example: 43.77125872427964
+        longtitude:
+          type: number
+          format: double
+          example: 11.26393917073614
+        time:
+          type: string
+          format: date-time
+          example: "2024-10-27T10:30:00Z"
+    SendReactionBody:
+      required:
+        - post_id
+        - rate
+        - comment
+      type: object
+      properties:
+        post_id:
+          type: integer
+          format: int64
+          example: 10
+        rate:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 5
+          example: 5
+        comment:
+          type: string
+          example: "Великолепно!"
+    Reaction:
+      required:
+        - id
+        - user
+        - rate
+        - comment
+      type: object
+      properties:
+        user: 
+          $ref: '#/components/schemas/User'
+        id:
+          type: integer
+          format: int64
+          example: 10
+        rate:
+          type: integer
+          format: int64
+          example: 5
+        comment:
+          type: string
+          example: "Великолепно!"
+    User:
+      required:
+        - nickname
+        - user_id
+        - avatar_url
+      type: object
+      properties:
+        nickname:
+          type: string
+          example: "super_traveler"
+        user_id:
+          type: integer
+          format: int64
+          example: 10
+        avatar_url:
+          type: string
+          example: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrxOTdBgCXwbUydQIy_30TzwBYJ6wrUhF78A&s"
+    SendCommentBody:
+      required:
+        - post_id
+        - text
+      type: object
+      properties:
+        post_id:
+          type: integer
+          format: int64
+          example: 10
+        text:
+          type: string
+          example: "Хороший пост!"
+    Comment:
+      required:
+        - user
+        - id
+        - text
+      type: object
+      properties:
+        user: 
+          $ref: '#/components/schemas/User'
+        id:
+          type: integer
+          format: int64
+          example: 10
+        text:
+          type: string
+          example: "Хороший пост!"
+    Comments:
+      required:
+        - comments
+        - cursor
+        - hasMore
+      type: object
+      properties:
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        nextCursor: 
+            type: string
+            example: "eyJ0czoiMjAyNS0xMC0xOVQxNTowMToyMloiLCJpZCI6InBzdF8wMUo5QVgzR1EzRTIifQ=="
+        hasMore: 
+          type: boolean
+          example: true
+    Users:
+      required:
+        - users
+        - cursor
+        - hasMore
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        nextCursor: 
+            type: string
+            example: "eyJ0czoiMjAyNS0xMC0xOVQxNTowMToyMloiLCJpZCI6InBzdF8wMUo5QVgzR1EzRTIifQ=="
+        hasMore: 
+          type: boolean
+          example: true    
+    Reactions:
+      required:
+        - reactions
+        - cursor
+        - hasMore
+      type: object
+      properties:
+        reactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reaction'
+        nextCursor: 
+            type: string
+            example: "eyJ0czoiMjAyNS0xMC0xOVQxNTowMToyMloiLCJpZCI6InBzdF8wMUo5QVgzR1EzRTIifQ=="
+        hasMore: 
+          type: boolean
+          example: true
+    Photo:
+      type: object
+      required:
+        - post_id
+        - url
+      properties:
+        post_id:
+          type: integer
+          format: int64
+          example: 10
+        url:
+          type: string
+          example: "url"
+    Feed: 
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        nextCursor: 
+          type: string
+          example: "eyJ0czoiMjAyNS0xMC0xOVQxNTowMToyMloiLCJpZCI6InBzdF8wMUo5QVgzR1EzRTIifQ=="
+        hasMore: 
+          type: boolean
+          example: true
+    SubscribeBody:
+      required:
+        - subscription_to_id
+      type: object
+      properties:
+        subscription_to_id:
+          type: integer
+          format: int64
+          example: 10  
+    ProblemDetails:
+         type: object
+         required: [type, title, status]
+         properties:
+           type: { type: string, format: uri }
+           title: { type: string }
+           status: { type: integer }
+           detail: { type: string }
+           code: { type: string }
+           correlationId: { type: string }
+  responses:
+       BadRequest:
+         description: Bad Request
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       Unauthorized:
+         description: Unauthorized
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       Forbidden:
+         description: Forbidden
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       NotFound:
+         description: Not Found
+         content:
+           application/problem+json:
+            schema: { $ref: '#/components/schemas/ProblemDetails' }
+       Conflict:
+         description: Conflict
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       UnsupportedMediaType:
+         description: Unsupported Media Type
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       PayloadTooLarge:
+         description: Payload Too Large
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       UnprocessableEntity:
+         description: Unprocessable Entity
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       TooManyRequests:
+         description: Too Many Requests
+         headers:
+           Retry-After:
+             schema: { type: string }
+             description: Seconds or HTTP-date
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       InternalServerError:
+         description: Internal Server Error
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+       ServiceUnavailable:
+         description: Service Unavailable
+         headers:
+           Retry-After:
+             schema: { type: string }
+         content:
+           application/problem+json:
+             schema: { $ref: '#/components/schemas/ProblemDetails' }
+  requestBodies:
+    SubscribeBody:
+      description: Сущность для выполнения подписки
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SubscribeBody'
+    CreatePostBody:
+      description: Сущность для сохранения поста
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreatePostBody'
+    SendReactionBody:
+      description: Сущность для отправки реакции
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SendReactionBody'
+    SendCommentBody:
+      description: Сущность для отправки комментария
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SendCommentBody'
