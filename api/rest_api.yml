@@ -29,6 +29,8 @@ paths:
       summary: Создание поста
       description: Выложить пост
       operationId: createPost
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
       requestBody:
         description: Тело поста
         content:
@@ -63,6 +65,8 @@ paths:
       summary: Загрузить фото
       description: Загружает фото и возвращает ссылку на него
       operationId: uploadPhoto
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
       requestBody:
         required: true
         content:
@@ -110,6 +114,8 @@ paths:
       summary: Оставить реакцию (комментарий + оценка)
       description: Оставить реакцию на какой-то пост
       operationId: sendReaction
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
       requestBody:
         description: Тело реакции
         content:
@@ -141,6 +147,9 @@ paths:
       description: Получить реакции по какому-то посту
       operationId: getReactions
       parameters:
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
         - name: post_id
           in: path
           description: id поста, к которому нужно получить реакции
@@ -148,20 +157,6 @@ paths:
           schema:
             type: integer
             format: int64
-        - in: query
-          name: limit
-          description: Max items to return (1..100). Default 20.
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 20
-        - in: query
-          name: cursor
-          required: false
-          schema:
-            type: string
       responses:
         '200':
           description: OK
@@ -187,6 +182,8 @@ paths:
       summary: Оставить комментарий
       description: Оставить комментарий к какому-то посту
       operationId: sendComment
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
       requestBody:
         description: Тело комментария
         content:
@@ -218,6 +215,9 @@ paths:
       description: Получить комментарии к какому-то посту
       operationId: getComments
       parameters:
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
         - name: post_id
           in: path
           description: id поста, к которому нужно получить комментарии
@@ -225,20 +225,6 @@ paths:
           schema:
             type: integer
             format: int64
-        - in: query
-          name: limit
-          description: Max items to return (1..100). Default 20.
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 20
-        - in: query
-          name: cursor
-          required: false
-          schema:
-            type: string
       responses:
         '200':
           description: OK
@@ -265,20 +251,9 @@ paths:
       description: Возвращает список постов, используя курсорную пагинацию
       operationId: getFeed
       parameters:
-        - in: query
-          name: limit
-          description: Max items to return (1..100). Default 20.
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 20
-        - in: query
-          name: cursor
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
         - in: query
           name: before
           required: false
@@ -311,20 +286,9 @@ paths:
       description: Возвращает список постов по заданной локации, используя курсорную пагинацию
       operationId: findByLocation
       parameters:
-        - in: query
-          name: limit
-          description: Max items to return (1..100). Default 20.
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 20
-        - in: query
-          name: cursor
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
         - in: query
           name: latitude
           required: true
@@ -366,20 +330,9 @@ paths:
       description: Возвращает список постов по названию локации, используя курсорную пагинацию
       operationId: findByLocationName
       parameters:
-        - in: query
-          name: limit
-          description: Max items to return (1..100). Default 20.
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 20
-        - in: query
-          name: cursor
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
         - in: query
           name: locationName
           required: true
@@ -412,6 +365,8 @@ paths:
       summary: Подписка
       description: Подписаться на какого-то пользователя
       operationId: subscribe
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
       requestBody:
         content:
           application/json:
@@ -442,20 +397,9 @@ paths:
       description: Получить список людей, на которых подписан пользователь
       operationId: getSubscriptions
       parameters:
-        - in: query
-          name: limit
-          description: Max items to return (1..100). Default 20.
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 20
-        - in: query
-          name: cursor
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
       responses:
         '200':
           description: OK
@@ -475,6 +419,34 @@ paths:
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
     
 components:
+  parameters:
+    Limit:
+      in: query
+      name: limit
+      description: Max items to return (1..100). Default 20.
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    Cursor:
+      in: query
+      name: cursor
+      required: false
+      schema:
+        type: string
+    RequestId:
+      name: X-Request-Id
+      in: header
+      description: >
+        Уникальный идентификатор запроса для корреляции логов и трассировки.
+        Если не передан — сервер сгенерирует автоматически.
+      required: false
+      schema:
+        type: string
+        format: uuid
+        example: 8f1a3b2c-1234-4d5e-9876-abcdef123456
   schemas:
     CreatePostBody:
       required:
@@ -551,6 +523,8 @@ components:
         rate:
           type: integer
           format: int64
+          minimum: 1
+          maximum: 5
           example: 5
         comment:
           type: string
