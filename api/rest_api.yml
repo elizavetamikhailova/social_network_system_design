@@ -22,7 +22,7 @@ tags:
   - name: feed
     description: Просмотр ленты 
 paths:
-  /posts/createPost:
+  /posts:
     post:
       tags:
         - post
@@ -58,7 +58,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
-  /photos/uploadPhoto:
+  /photos:
     post:
       tags:
         - photos
@@ -107,7 +107,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
-  /reactions/sendReaction:
+  /reactions:
     post:
       tags:
         - reactions
@@ -175,7 +175,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
-  /comments/sendComment:
+  /comments:
     post:
       tags:
         - comments
@@ -358,7 +358,7 @@ paths:
         '429': { $ref: '#/components/responses/TooManyRequests' }
         '500': { $ref: '#/components/responses/InternalServerError' }
         '503': { $ref: '#/components/responses/ServiceUnavailable' }
-  /subscriptions/subscribe:
+  /subscriptions:
     post:
       tags:
         - subscription
