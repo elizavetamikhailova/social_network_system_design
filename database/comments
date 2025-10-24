@@ -4,6 +4,7 @@ Table reactions {
   post_id  bigint [not null]
   rate smallint [not null]
   comment text [not null]
+  created_at timestampz
 }
 
 Table comments {
@@ -11,4 +12,5 @@ Table comments {
   user_id  bigint [not null]
   post_id  bigint [not null]
   comment text [not null]
+  created_at timestampz
 }
