@@ -17,8 +17,6 @@ tags:
     description: Создание комментариев
   - name: subscription
     description: Возможность подписаться
-  - name: search
-    description: Поиск постов по локации и названию мест
   - name: feed
     description: Просмотр ленты 
 paths:
@@ -248,43 +246,8 @@ paths:
       tags:
         - feed
       summary: Получение ленты для пользователя
-      description: Возвращает список постов, используя курсорную пагинацию
+      description: Возвращает список постов, используя курсорную пагинацию. Если переданы locationName или latitude и longtitude – то будет осуществляться поиск по этим параметрам. Если не переданы, то будет возвращаться лента пользователя
       operationId: getFeed
-      parameters:
-        - $ref: '#/components/parameters/RequestId'
-        - $ref: '#/components/parameters/Limit'
-        - $ref: '#/components/parameters/Cursor'
-        - in: query
-          name: before
-          required: false
-          schema:
-            type: string
-            format: date-time
-      responses:
-        '200':
-          description: OK
-          headers:
-            X-Request-Id:
-              description: Request correlation id
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Feed'
-        '400': { $ref: '#/components/responses/BadRequest' }
-        '401': { $ref: '#/components/responses/Unauthorized' }
-        '403': { $ref: '#/components/responses/Forbidden' }
-        '429': { $ref: '#/components/responses/TooManyRequests' }
-        '500': { $ref: '#/components/responses/InternalServerError' }
-        '503': { $ref: '#/components/responses/ServiceUnavailable' }
-  /search/findByLocation:
-    get:
-      tags:
-        - search
-      summary: Получение ленты по поиску по заданной локации 
-      description: Возвращает список постов по заданной локации, используя курсорную пагинацию
-      operationId: findByLocation
       parameters:
         - $ref: '#/components/parameters/RequestId'
         - $ref: '#/components/parameters/Limit'
@@ -305,11 +268,16 @@ paths:
             example: 11.26393917073614
         - in: query
           name: locationName
-          description: Или locationName или latitude и longtitude
           required: false
           schema:
             type: string
             example: "Флоренция"
+        - in: query
+          name: before
+          required: false
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
           description: OK
