@@ -1,0 +1,9 @@
+Table posts {
+  id integer [primary key]
+  user_id integer [not null]
+  description text
+  created_at timestamp
+  photo_urls json
+  latitude double
+  longtitude double
+}
