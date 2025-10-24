@@ -1,9 +1,8 @@
 Table posts {
-  id integer [primary key]
-  user_id integer [not null]
+  id bigint [pk, increment]
+  user_id  bigint [not null]
   description text
-  created_at timestamp
-  photo_urls json
+  created_at timestamptz
   latitude double
   longtitude double
 }
