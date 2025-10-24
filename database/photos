@@ -1,0 +1,75 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Enum photo_status {
+  uploading
+  ready
+  failed
+  orphan      // загружено, но не привязано к посту
+  deleted
+}
+
+Enum variant_type {
+  original
+  web
+  preview
+  thumb
+}
+
+Table upload_batch {
+  id            uuid        [pk]
+  owner_user_id bigint      [not null, note: "ID пользователя из внешнего сервиса Users"]
+  created_at    timestamptz
+  expires_at    timestamptz [note: "TTL для очистки непривязанных фото"]
+  Note: 'Клиент грузит фото в рамках batch; потом пост привяжет фото по batch или списку photo_id'
+}
+
+Table photos {
+  id            bigint      [pk, increment]
+  owner_user_id bigint      [not null, note: "Автор фото (внешний user_id)"]
+  batch_id      uuid        [ref: > upload_batch.id, note: "Может быть NULL после привязки/очистки"]
+  storage_key   text        [not null, unique, note: "Путь/ключ в S3: env/users/{user}/batches/{batch}/{uuid}.{ext}"]
+  mime_type     varchar     [not null]
+  size_bytes    bigint
+  width         int
+  height        int
+  checksum_md5  char(32)    [note: "Для идемпотентности"]
+  status        photo_status  [not null, default: 'uploading']
+  created_at    timestamptz
+  ready_at      timestamptz
+  deleted_at    timestamptz
+
+  Note: 'Храним только метаданные, сам файл в S3'
+}
+
+Table photo_variants {
+  id            bigint      [pk, increment]
+  photo_id      bigint      [not null, ref: > photos.id]
+  type          variant_type  [not null]
+  storage_key   text        [not null, note: "Отдельный ключ в S3 (например, webp/resize)"]
+  width         int
+  height        int
+  size_bytes    bigint
+  ready_at      timestamptz
+
+  Note: 'Для получения доступа к разным размерам фото'
+}
+
+Table post_photo_links {
+  id            bigint      [pk, increment]
+  photo_id      bigint      [not null, ref: > photos.id]
+  post_id       bigint      [not null, note: "ID поста из внешнего сервиса Posts (без FK)"]
+  position      smallint    [not null, default: 1, note: "Порядок фото в посте"]
+  created_at    timestamptz
+
+  Note: 'Эта таблица нужна для того, чтобы иметь возможность делать связь нескольких постов с одним фото, на случай если будут добавляться репосты и тд'
+}
+
+Table cleanup_queue {
+  id            bigint      [pk, increment]
+  photo_id      bigint      [not null, ref: > photos.id]
+  reason        varchar(50) [not null, note: "expired_batch | orphan_ttl | user_delete | replace"]
+  scheduled_at  timestamptz
+  attempt       int
+  Note: 'Очередь на удаление из S3'
+}
