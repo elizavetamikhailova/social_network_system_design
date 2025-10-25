@@ -17,7 +17,7 @@ Enum variant_type {
 }
 
 Table upload_batch {
-  id            uuid        [pk]
+  id            bigint        [pk]
   owner_user_id bigint      [not null, note: "ID пользователя из внешнего сервиса Users"]
   created_at    timestamptz
   expires_at    timestamptz [note: "TTL для очистки непривязанных фото"]
