@@ -58,5 +58,24 @@ traffic = 33 735 * 400 kb = 13 GB/s
 
 ## Комментарии + реакции
 capacity(комментарии + реакции) = traffic * 86400 * 365 = 2 mb/s * 86400 * 365 = 60 TB
+IOPS = RPS(реакции read + реакции write) + RPS (комментарии read + комментари write) = 15 378
+traffic = 15 378 * 2 kb = 31 mb/s
+
+- HDD: 
+  - Disks_for_capacity = 60 / 32 = 2
+  - Disks_for_throughput = traffic_per_second / disk_throughput = 1
+  - Disks_for_iops = iops / disk_iops = 15 378 / 100 = 154
+  - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 154
+- SSD(sata):
+  - Disks_for_capacity = capacity / disk_capacity = 1
+  - Disks_for_throughput = traffic_per_second / disk_throughput = 1
+  - Disks_for_iops = iops / disk_iops = 15 378 / 1000 = 16
+  - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 16
+- SSD(nVME):
+  - Disks_for_capacity = capacity / disk_capacity = 2
+  - Disks_for_throughput = traffic_per_second / disk_throughput = 1
+  - Disks_for_iops = iops / disk_iops =  15 378 / 10000 = 2
+  - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 2
+
 ## Подписки
 capacity (подписки) = traffic * 86400 * 365 = 10 kb/s * 86400 * 365 = 300 GB
