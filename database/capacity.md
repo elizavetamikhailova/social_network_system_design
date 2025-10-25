@@ -1,6 +1,6 @@
 # Рассчет капасити
 ## Посты
-- capacity = traffic * 86400 * 365 = 35 kb/s * 86400 * 365 = 1 TB
+- capacity = traffic(write) * 86400 * 365 = 35 kb/s * 86400 * 365 = 1 TB
 - HDD: 
   - Disks_for_capacity = capacity / disk_capacity = 1
   - Disks_for_throughput = traffic_per_second / disk_throughput = 1
@@ -17,7 +17,7 @@
   - Disks_for_iops = iops / disk_iops = (RPS(создание поста) + RPS(загрузка ленты) + RPS(просмотр поста) + RPS(поиск)) / disk_iops = 6747 / 10000 = 1
   - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 1
 ## Фото (мета данные)
-capacity = traffic * 86400 * 365 = 65 kb/s * 86400 * 365 = 2 TB
+capacity = traffic(write) * 86400 * 365 = 65 kb/s * 86400 * 365 = 2 TB
 IOPS = (RPS(создание поста) + RPS(загрузка ленты) + RPS(просмотр поста) + RPS(поиск)) * 5 = 33 735
 traffic = 33 735 * 334 b = 10 mb/s
 - HDD: 
@@ -36,7 +36,7 @@ traffic = 33 735 * 334 b = 10 mb/s
   - Disks_for_iops = iops / disk_iops =  33 735 / 10000 = 4
   - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 4
 ## Фото (сами файлы)
-capacity = traffic * 86400 * 365 = 574 mb/s * 86400 * 365 = 17 263 TB
+capacity = traffic(write) * 86400 * 365 = 574 mb/s * 86400 * 365 = 17 263 TB
 IOPS = (RPS(создание поста) + RPS(загрузка ленты) + RPS(просмотр поста) + RPS(поиск)) * 5 = 33 735
 traffic = 33 735 * 400 kb = 13 GB/s
 
@@ -57,7 +57,7 @@ traffic = 33 735 * 400 kb = 13 GB/s
   - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 575
 
 ## Комментарии + реакции
-capacity(комментарии + реакции) = traffic * 86400 * 365 = 2 mb/s * 86400 * 365 = 60 TB
+capacity(комментарии + реакции) = traffic(write) * 86400 * 365 = 2 mb/s * 86400 * 365 = 60 TB
 IOPS = RPS(реакции read + реакции write) + RPS (комментарии read + комментари write) = 15 378
 traffic = 15 378 * 2 kb = 31 mb/s
 
@@ -78,4 +78,22 @@ traffic = 15 378 * 2 kb = 31 mb/s
   - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 2
 
 ## Подписки
-capacity (подписки) = traffic * 86400 * 365 = 10 kb/s * 86400 * 365 = 300 GB
+capacity (подписки) = traffic(write) * 86400 * 365 = 10 kb/s * 86400 * 365 = 300 GB
+IOPS = 463
+traffic = 463 * 200 kb/s = 90 mb/s
+
+- HDD: 
+  - Disks_for_capacity = 1
+  - Disks_for_throughput = traffic_per_second / disk_throughput = 1
+  - Disks_for_iops = iops / disk_iops = 463 / 100 = 5
+  - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 5
+- SSD(sata):
+  - Disks_for_capacity = capacity / disk_capacity = 1
+  - Disks_for_throughput = traffic_per_second / disk_throughput = 1
+  - Disks_for_iops = iops / disk_iops = 463 / 1000 = 1
+  - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 1
+- SSD(nVME):
+  - Disks_for_capacity = capacity / disk_capacity = 1
+  - Disks_for_throughput = traffic_per_second / disk_throughput = 1
+  - Disks_for_iops = iops / disk_iops =  463 / 10000 = 1
+  - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 1
