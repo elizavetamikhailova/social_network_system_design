@@ -1,0 +1,43 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Enum variant_type {
+  original
+  preview
+}
+
+Table photos {
+  id            bigint        [pk, increment]
+  owner_user_id bigint        [not null]
+  storage_key   text          [not null, unique, note: "Путь/ключ в S3"]
+  mime_type     varchar       [not null]
+  size_bytes    bigint        [not null]
+  width         int           [not null]
+  height        int           [not null]
+  created_at    timestamptz  
+
+  Note: 'Храним только метаданные, сам файл в S3'
+}
+
+Table photo_variants {
+  id            bigint        [pk, increment]
+  photo_id      bigint        [not null, ref: > photos.id]
+  type          variant_type  [not null]
+  storage_key   text          [not null]
+  width         int           [not null]
+  height        int           [not null]
+  size_bytes    bigint        [not null]
+  ready_at      timestamptz   [not null]
+
+  Note: 'Для получения доступа к разным размерам фото'
+}
+
+Table post_photo_links {
+  id            bigint       [pk, increment]
+  photo_id      bigint       [not null, ref: > photos.id]
+  post_id       bigint       [not null]
+  position      smallint     [not null, note: "Порядок фото в посте"]
+  created_at    timestamptz  [not null]
+
+  Note: 'Эта таблица нужна для того, чтобы иметь возможность делать связь нескольких постов с одним фото, на случай если будут добавляться репосты и тд'
+}
