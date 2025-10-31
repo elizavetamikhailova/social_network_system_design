@@ -12,8 +12,6 @@ Table photos {
   storage_key   text          [not null, unique, note: "Путь/ключ в S3"]
   mime_type     varchar       [not null]
   size_bytes    bigint        [not null]
-  width         int           [not null]
-  height        int           [not null]
   created_at    timestamptz  
 
   Note: 'Храним только метаданные, сам файл в S3'
@@ -24,8 +22,6 @@ Table photo_variants {
   photo_id      bigint        [not null, ref: > photos.id]
   type          variant_type  [not null]
   storage_key   text          [not null]
-  width         int           [not null]
-  height        int           [not null]
   size_bytes    bigint        [not null]
   ready_at      timestamptz   [not null]
 
