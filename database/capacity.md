@@ -97,3 +97,15 @@ traffic = 463 * 200 kb/s = 90 mb/s
   - Disks_for_throughput = traffic_per_second / disk_throughput = 1
   - Disks_for_iops = iops / disk_iops =  463 / 10000 = 1
   - Disks = max(ceil(Disks_for_capacity), ceil(Disks_for_throughput), ceil(Disks_for_iops)) = 1
+ 
+### Итоговый выбор
+## Посты
+1 SSD(nVME)
+## Фото (мета данные)
+4 SSD(nVME)
+## Фото (сами файлы)
+539 HDD
+## Комментарии + реакции
+2 SSD(nVME)
+## Подписки
+1 SSD(sata)
