@@ -10,6 +10,7 @@ System_Boundary(c, "Adventures") {
    Container(appAndroid, "Мобильное приложение", "Android", "Adventure App")
    Container(appIOS, "Мобильное приложение", "IOS", "Adventure App")
    Container(web, "Сайт", "Web", "adventure.com")
+   Container(loadBalancer, "Load balancer", "LB", "Балансировщик нагрузки")
 
    Container(posts, "Posts Service", "Go", "Создание и просмотр постов", $tags = "microService")      
    ContainerDb(posts_db, "Posts Database", "PostgreSQL", "База данных для постов", $tags = "storage")      
@@ -24,6 +25,23 @@ System_Boundary(c, "Adventures") {
    Container(subscriptions, "Subscriptions Service", "Go", "Подписки", $tags = "microService")      
    ContainerDb(users_db, "Users Database", "PostgreSQL", "База данных для пользователей и подписок", $tags = "storage")
 }
+
+Rel(appAndroid, loadBalancer, "", "")
+Rel(appIOS, loadBalancer, "", "")
+Rel(web, loadBalancer, "", "")
+
+Rel(loadBalancer, posts, "", "HTTPS")
+Rel(posts, posts_db, "", "")
+
+Rel(loadBalancer, photos, "", "HTTPS")
+Rel(photos, photos_db, "", "")
+Rel(photos, photos_storage, "", "")
+
+Rel(loadBalancer, reactions, "", "HTTPS")
+Rel(reactions, reactions_db, "", "")
+
+Rel(loadBalancer, subscriptions, "", "HTTPS")
+Rel(subscriptions, users_db, "", "")
 
 
 SHOW_LEGEND()
