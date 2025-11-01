@@ -26,6 +26,10 @@ System_Boundary(c, "Adventures") {
    ContainerDb(users_db, "Users Database", "PostgreSQL", "База данных для пользователей и подписок", $tags = "storage")
 }
 
+Rel(user, appAndroid, "", "")
+Rel(user, appIOS, "", "")
+Rel(user, web, "", "")
+
 Rel(appAndroid, loadBalancer, "", "")
 Rel(appIOS, loadBalancer, "", "")
 Rel(web, loadBalancer, "", "")
