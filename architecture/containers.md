@@ -19,17 +19,15 @@ System_Boundary(ps, "Posts") {
 
 System_Boundary(f, "Feed") {
    Container(feed, "Feed Service", "Go", "Лента постов", $tags = "microService")
-   Container(feed_worker, "Feed Worker", "Go", "Преподготовка постов", $tags = "microService")       
    ContainerDb(feed_cache, "Feed Cache", "Redis", "Преподготовленная лента постов", $tags = "storage")
    ContainerQueue(feed_queue, "Feed Queue", "Очередь, куда сервисы пишут события о загрузке фото") 
 }          
 
 System_Boundary(p, "Photos") {
    Container(photos, "Photos Service", "Go", "Загрузка и получение фото", $tags = "microService") 
-   Container(photos_worker, "Photos Worker", "Go", "Периодическое удаление фото, которые не были привязаны к посту", $tags = "microService")           
    ContainerDb(photos_db, "Photos Database", "PostgreSQL", "База данных для мета данных фото", $tags = "storage")
-   ContainerDb(photos_storage, "Photos S3", "S3", "Хранилище фото", $tags = "storage")
-   ContainerQueue(photos_queue, "Photos Queue", "Очередь, куда сервис постов пишет события о загрузке фото") 
+   ContainerDb(photos_storage, "Photos Blob Storage", "Ceph", "Хранилище фото", $tags = "storage")
+   Container(posts_change_data_capture, "Photos CDC", "CDC для БД постов") 
 }     
    
 System_Boundary(r, "Reactions") {
@@ -56,19 +54,17 @@ Rel(posts, posts_db, "Сохранение и получение постов", 
 
 Rel(load_balancer, feed, "Получение ленты постов", "HTTPS")
 Rel(feed, feed_cache, "Получение и сборка ленты постов", "")
+Rel(feed, feed_queue, "Получение событий о постах", "")
+
 
 Rel(load_balancer, photos, "Загрузка фото", "HTTPS")
 Rel(photos, photos_db, "", "")
 Rel(photos, photos_storage, "", "")
-Rel(photos_worker, photos_db, "", "")
-Rel(photos_worker, photos_storage, "", "")
-Rel(photos_queue, photos, "События о загрузке постов", "")
-Rel(posts, photos_queue, "События о загрузке постов", "")
+Rel(posts_change_data_capture, photos, "События о загрузке постов", "")
+Rel(posts_db, posts_change_data_capture, "События об изменениях в БД постов", "")
 
 Rel(posts, feed_queue, "События о загрузке постов", "")
-Rel(feed_worker, feed_queue, "Получение событий об изменениях в ленте", "")
-Rel(feed_worker, feed_cache, "Пересборка ленты", "")
-Rel(feed, reactions, "Получение реакций", "gRPS")
+Rel(reactions, feed_queue, "События о новых реакциях", "gRPS")
 Rel(subscriptions, feed_queue, "События о подписках и отписках", "")
 
 
