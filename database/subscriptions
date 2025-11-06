@@ -1,0 +1,6 @@
+Table subscriptions {
+  id                bigint [pk, increment]
+  follower_user_id  bigint [not null] 
+  followee_user_id  bigint [not null]
+  created_at        timestamptz
+}
