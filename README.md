@@ -111,22 +111,10 @@
 Для шардинга будем использовать консистентное хэширование с виртуальными нодами
 ## Рассчет количества хостов
 ### Посты
-- HDD:
-  - Hosts = disks / disks_per_host = 67 / 2 = 34
-  - Hosts_with_replication = hosts * replication_factor = 34 * 2 = 68
-- SSD(sata):
-  -  Hosts = 7 / 1 = 7
-  -  Hosts_with_replication = 7 * 2 = 14
 - SSD(nVME):
   - Hosts = 1
   - Hosts_with_replication = 2
 ### Фото (мета данные)
-- HDD:
-  - Hosts = 337 / 2 = 169
-  - Hosts_with_replication = hosts * replication_factor = 338
-- SSD(sata):
-  -  Hosts = 34 / 2 = 17
-  -  Hosts_with_replication = 35
 - SSD(nVME):
   - Hosts = 4 / 1 = 4
   - Hosts_with_replication = 8
@@ -134,29 +122,11 @@
 - HDD:
   - Hosts = 539 / 2 = 270
   - Hosts_with_replication = hosts * replication_factor = 540
-- SSD(sata):
-  -  Hosts = 173 / 2 = 87
-  -  Hosts_with_replication = 174
-- SSD(nVME):
-  - Hosts = 575 / 2 = 288
-  - Hosts_with_replication = 576
 ### Комментарии + реакции
-- HDD:
-  - Hosts = 154 / 2 = 77
-  - Hosts_with_replication = hosts * replication_factor = 154
-- SSD(sata):
-  -  Hosts = 16 / 1 = 16
-  -  Hosts_with_replication = 32
 - SSD(nVME):
   - Hosts = 2
   - Hosts_with_replication = 4
 ### Подписки
-- HDD:
-  - Hosts = 5 / 1 = 5
-  - Hosts_with_replication = hosts * replication_factor = 10
 - SSD(sata):
   -  Hosts = 1
   -  Hosts_with_replication = 2
-- SSD(nVME):
-  - Hosts = 1
-  - Hosts_with_replication = 2
