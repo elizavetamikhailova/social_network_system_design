@@ -106,7 +106,6 @@
 - Traffic = 6712 * 10 kb = 65 mb/s
 
 ## Репликация
-Мастер-мастер репликация, потому что у нас будет минимум 2 ДЦ 
 Репликация будет асинхронной
 Для шардинга будем использовать консистентное хэширование с виртуальными нодами
 ## Рассчет количества хостов
@@ -114,19 +113,34 @@
 - SSD(nVME):
   - Hosts = 1
   - Hosts_with_replication = 2
+  - Master-slave
+  - RF = 2
+  - Шардинг по user_id
 ### Фото (мета данные)
 - SSD(nVME):
   - Hosts = 4 / 1 = 4
   - Hosts_with_replication = 8
+  - Master-slave
+  - RF = 2
+  - Шардинг по owner_user_id
 ### Фото (сами файлы)
 - HDD:
   - Hosts = 539 / 2 = 270
   - Hosts_with_replication = hosts * replication_factor = 540
+  - Master-slave
+  - RF = 2
+  - Можно часть фото хранить на SSD и часть на HDD, для того, чтобы свежие данные были в более быстром доступе
 ### Комментарии + реакции
 - SSD(nVME):
   - Hosts = 2
   - Hosts_with_replication = 4
+  - Master-slave
+  - RF = 2
+  - Шардинг по user_id
 ### Подписки
 - SSD(sata):
   -  Hosts = 1
   -  Hosts_with_replication = 2
+  - Master-slave
+  - RF = 2
+  - Шардинг по user_id
